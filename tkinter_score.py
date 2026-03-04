@@ -1,0 +1,26 @@
+import tkinter as tk
+import serial
+
+# Connect to Arduino (adjust COM port or /dev/ttyUSB0)
+arduino = serial.Serial('COM6', 9600)
+
+score = 0
+
+def update_score(change):
+    global score
+    score += change
+    if score < 0: score = 0
+    if score > 9: score = 9
+    score_label.config(text=str(score))
+    arduino.write(str(score).encode())  # Send score to Arduino
+
+root = tk.Tk()
+root.title("Score Display")
+
+score_label = tk.Label(root, text="0", font=("Arial", 48))
+score_label.pack()
+
+tk.Button(root, text="Increase", command=lambda: update_score(1)).pack()
+tk.Button(root, text="Decrease", command=lambda: update_score(-1)).pack()
+
+root.mainloop()
